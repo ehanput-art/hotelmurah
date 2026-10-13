@@ -1,0 +1,685 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OYO Stay - Pilihan Penginapan</title>
+    <style>
+      :root {
+        --blue: #0878e8;
+        --blue-dark: #123c70;
+        --red: #ee2634;
+        --ink: #1d2b3f;
+        --muted: #62748a;
+        --bg: #f3f8fd;
+        --line: #e0eaf5;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        color: var(--ink);
+        background: var(--bg);
+      }
+      button,
+      input {
+        font: inherit;
+      }
+      button {
+        cursor: pointer;
+      }
+      .topbar {
+        background: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 14px max(5%, calc((100% - 1200px) / 2));
+        box-shadow: 0 2px 12px #17365d12;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+      .logo {
+        color: var(--red);
+        font-size: 34px;
+        font-weight: 900;
+        letter-spacing: -2px;
+      }
+      nav {
+        display: flex;
+        gap: 28px;
+        flex-wrap: wrap;
+      }
+      nav a {
+        color: var(--ink);
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 14px;
+      }
+      nav a:hover {
+        color: var(--blue);
+      }
+      .hero {
+        min-height: 280px;
+        padding: 45px max(5%, calc((100% - 1200px) / 2)) 75px;
+        color: white;
+        background:
+          linear-gradient(
+            90deg,
+            rgba(10, 63, 123, 0.96),
+            rgba(14, 102, 183, 0.72),
+            rgba(14, 102, 183, 0.08)
+          ),
+          url("https://z.cdrst.com/foto/hotel-sf/c4f3e47/granderesp/foto-hotel-c4f339d.jpg")
+            center 55% / cover;
+      }
+      .hero h1 {
+        font-size: clamp(28px, 4vw, 44px);
+        max-width: 520px;
+        line-height: 1.12;
+        margin: 0 0 12px;
+      }
+      .hero p {
+        max-width: 480px;
+        line-height: 1.6;
+        margin: 0;
+      }
+      .searchbox {
+        background: #fff;
+        border-radius: 16px;
+        padding: 14px;
+        max-width: 1200px;
+        margin: -38px auto 0;
+        position: relative;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr auto;
+        gap: 10px;
+        box-shadow: 0 8px 24px #163a6317;
+        border: 1px solid var(--line);
+      }
+      .searchbox input {
+        min-width: 0;
+        border: 1px solid var(--line);
+        border-radius: 9px;
+        padding: 13px;
+        color: var(--ink);
+      }
+      .primary,
+      .detail-btn,
+      .back-btn {
+        border: 0;
+        border-radius: 9px;
+        color: #fff;
+        background: var(--blue);
+        padding: 13px 18px;
+        font-weight: 700;
+      }
+      .primary:hover,
+      .detail-btn:hover,
+      .back-btn:hover {
+        filter: brightness(0.93);
+      }
+      main {
+        max-width: 1200px;
+        margin: 30px auto 55px;
+        padding: 0 18px;
+      }
+      .section-heading {
+        margin-bottom: 18px;
+      }
+      .section-heading h2 {
+        margin: 0 0 7px;
+        font-size: 29px;
+      }
+      .section-heading p {
+        margin: 0;
+        color: var(--muted);
+      }
+      .hotel-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 18px;
+      }
+      .hotel-card {
+        background: #fff;
+        border-radius: 13px;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        box-shadow: 0 4px 14px #15395b0c;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+      }
+      .hotel-card img {
+        width: 100%;
+        height: 155px;
+        object-fit: cover;
+        display: block;
+      }
+      .card-body {
+        padding: 14px;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+      }
+      .card-body h3 {
+        margin: 0 0 8px;
+        font-size: 17px;
+      }
+      .location {
+        color: var(--muted);
+        font-size: 13px;
+        margin-bottom: 12px;
+      }
+      .amenities {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        font-size: 12px;
+        color: #425670;
+        margin-bottom: 14px;
+      }
+      .amenities span {
+        background: #f0f6fc;
+        padding: 6px 8px;
+        border-radius: 6px;
+      }
+      .price {
+        color: var(--blue);
+        font-weight: 800;
+        font-size: 19px;
+        margin-top: auto;
+        margin-bottom: 12px;
+      }
+      .price small {
+        font-size: 12px;
+        font-weight: 400;
+        color: var(--muted);
+      }
+      .detail-btn {
+        width: 100%;
+        padding: 11px;
+      }
+      .detail-view {
+        display: none;
+      }
+      .detail-view.active {
+        display: block;
+      }
+      .home-view.hidden {
+        display: none;
+      }
+      .detail-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+      .back-btn {
+        background: var(--blue-dark);
+      }
+      .detail-layout {
+        display: grid;
+        grid-template-columns: 1.35fr 1fr;
+        gap: 22px;
+        align-items: start;
+      }
+      .gallery {
+        display: grid;
+        grid-template-columns: 1.4fr 1fr;
+        gap: 10px;
+      }
+      .gallery .main-photo {
+        width: 100%;
+        height: 360px;
+        object-fit: cover;
+        border-radius: 13px;
+        grid-row: span 2;
+      }
+      .gallery .small-photo {
+        width: 100%;
+        height: 175px;
+        object-fit: cover;
+        border-radius: 13px;
+      }
+      .thumbs {
+        display: flex;
+        gap: 8px;
+        margin-top: 10px;
+      }
+      .thumbs img {
+        width: 25%;
+        height: 75px;
+        object-fit: cover;
+        border-radius: 8px;
+        cursor: pointer;
+        border: 2px solid transparent;
+      }
+      .thumbs img:hover {
+        border-color: var(--blue);
+      }
+      .info-panel,
+      .about-panel {
+        background: white;
+        border: 1px solid var(--line);
+        border-radius: 13px;
+        padding: 22px;
+      }
+      .info-panel h2 {
+        margin: 0 0 10px;
+        font-size: 28px;
+      }
+      .rating {
+        color: #e9a313;
+        margin: 12px 0;
+        font-weight: 700;
+      }
+      .detail-price {
+        color: var(--blue);
+        font-size: 25px;
+        font-weight: 800;
+        margin: 16px 0;
+      }
+      .detail-price small {
+        font-size: 13px;
+        color: var(--muted);
+        font-weight: 400;
+      }
+      .info-panel p,
+      .about-panel p {
+        line-height: 1.7;
+        color: #50647b;
+      }
+      .info-panel h3,
+      .about-panel h3 {
+        margin-bottom: 8px;
+      }
+      .features {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 9px;
+        padding: 0;
+        list-style: none;
+      }
+      .features li {
+        background: #edf6ff;
+        color: #24527e;
+        border-radius: 8px;
+        padding: 9px 11px;
+        font-size: 13px;
+      }
+      .about-panel {
+        margin-top: 20px;
+      }
+      footer {
+        background: var(--blue-dark);
+        color: white;
+        padding: 24px 5%;
+        text-align: center;
+      }
+      footer strong {
+        color: white;
+        font-size: 25px;
+      }
+      footer p {
+        margin: 8px 0 0;
+        color: #dceaff;
+        font-size: 13px;
+      }
+      .notice {
+        color: var(--muted);
+        font-size: 12px;
+        margin-top: 16px;
+      }
+      @media (max-width: 900px) {
+        .hotel-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .detail-layout {
+          grid-template-columns: 1fr;
+        }
+        .searchbox {
+          margin-left: 18px;
+          margin-right: 18px;
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      @media (max-width: 560px) {
+        .topbar {
+          padding: 12px 18px;
+          align-items: flex-start;
+          flex-direction: column;
+          gap: 8px;
+        }
+        nav {
+          gap: 16px;
+        }
+        .hero {
+          padding: 35px 20px 65px;
+        }
+        .searchbox {
+          grid-template-columns: 1fr;
+        }
+        main {
+          margin-top: 24px;
+        }
+        .hotel-grid {
+          grid-template-columns: 1fr;
+        }
+        .hotel-card img {
+          height: 210px;
+        }
+        .gallery {
+          grid-template-columns: 1fr 1fr;
+        }
+        .gallery .main-photo {
+          grid-column: 1 / -1;
+          grid-row: auto;
+          height: 240px;
+        }
+        .gallery .small-photo {
+          height: 130px;
+        }
+        .detail-top {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+        .section-heading h2 {
+          font-size: 25px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="logo">OYO</div>
+      <nav aria-label="Navigasi utama">
+        <a
+          href="#"
+          onclick="
+            showHome();
+            return false;
+          "
+          >Beranda</a
+        >
+        <a href="#tentang" onclick="showHome()">Tentang OYO</a>
+        <a href="#kontak">Kontak</a>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <h1>Penginapan Nyaman fasilitas lengkap<br />Pilihan Terbaik</h1>
+      <p>Temukan hotel dan penginapan favoritmu dengan harga bersahabat.</p>
+    </section>
+
+    <form class="searchbox" id="searchForm">
+      <input
+        id="searchLocation"
+        type="text"
+        placeholder="Cari nama hotel atau lokasi..."
+        aria-label="Cari hotel"
+      />
+      <input id="checkin" type="date" aria-label="Tanggal check-in" />
+      <input id="checkout" type="date" aria-label="Tanggal check-out" />
+      <button class="primary" type="submit">⌕ Cari Hotel</button>
+    </form>
+
+    <main>
+      <section class="home-view" id="homeView">
+        <div class="section-heading">
+          <h2>Pilihan Penginapan</h2>
+          <p>Pilih hotel yang cocok untuk perjalananmu.</p>
+        </div>
+        <div class="hotel-grid" id="hotelGrid"></div>
+        <p class="notice">
+          Catatan:"nikmati waktu istirahat anda dengan nyaman,kebersihan adalah
+          prioritas kami"
+        </p>
+      </section>
+
+      <section class="detail-view" id="detailView">
+        <div class="detail-top">
+          <button class="back-btn" onclick="showHome()">
+            ← Kembali ke daftar hotel
+          </button>
+          <span style="color: #62748a; font-size: 14px"
+            >Beranda / Detail Penginapan</span
+          >
+        </div>
+        <div class="detail-layout">
+          <div>
+            <div class="gallery" id="gallery"></div>
+            <div class="thumbs" id="thumbs"></div>
+            <section class="about-panel">
+              <h3>Tentang Hotel</h3>
+              <p id="aboutText"></p>
+            </section>
+          </div>
+          <aside class="info-panel">
+            <h2 id="detailName"></h2>
+            <div class="location" id="detailLocation"></div>
+            <div class="rating">
+              ★ <span id="detailRating">4.5</span>
+              <span style="color: #718096; font-size: 12px; font-weight: 400"
+                >(contoh penilaian)</span
+              >
+            </div>
+            <div class="detail-price" id="detailPrice"></div>
+            <button
+              class="primary"
+              style="width: 100%"
+              onclick="bookingHotel()"
+            >
+              Hubungi untuk Pemesanan
+            </button>
+            <h3>Deskripsi</h3>
+            <p id="detailDescription"></p>
+            <h3>Fasilitas</h3>
+            <ul class="features" id="detailFacilities"></ul>
+            <p class="notice">
+              Pastikan harga, ketersediaan kamar, dan nomor kontak diperbarui
+              sebelum website dipublikasikan.
+            </p>
+          </aside>
+        </div>
+      </section>
+    </main>
+
+    <footer id="kontak">
+      <strong>OYO</strong>
+      <p>Penginapan nyaman, perjalanan menyenangkan.</p>
+      <p>Beranda &nbsp; | &nbsp; Tentang OYO &nbsp; | &nbsp; Kontak</p>
+    </footer>
+
+    <script>
+      // Ganti nama, harga, deskripsi, dan tautan foto sesuai hotel yang sebenarnya.
+      const hotels = [
+        {
+          id: 1,
+          name: "OYO Bhakti Homestay",
+          location: "Medan, Sumatera Utara",
+          price: "Rp 100.000-an",
+          rating: "4.5",
+          cardPhoto:
+            "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/18/56/0c/a8/oyo-622-bakti-homestay.jpg?w=900&h=500&s=1",
+          photos: [
+            "https://res.klook.com/klook-hotel/image/upload/travelapi/37000000/36820000/36819500/36819432/2c34e254_z.jpg",
+            "https://images.oyoroomscdn.com/uploads/hotel_image/102666/large/18e2b4cbc38290fa.jpg",
+            "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/18/8c/c1/5d/oyo-894-nusa-indah-homestay.jpg?w=900&h=500&s=1",
+            "https://images.unsplash.com/photo-1620626011761-996317b8d101?auto=format&fit=crop&w=900&q=85",
+          ],
+          description:
+            "Nikmati pengalaman menginap yang nyaman, tenang, dan menyenangkan dengan suasana homestay yang hangat, fasilitas memadai, serta pelayanan terbaik untuk menemani waktu istirahat Anda..",
+          facilities: [
+            "Wi-Fi",
+            "Parkir",
+            "TV",
+            "AC",
+            "Kamar mandi",
+            "Resepsionis",
+          ],
+        },
+        {
+          id: 2,
+          name: "hotel o festive inn medan",
+          location: "Medan, Sumatera Utara",
+          price: "Rp 100.000-an",
+          rating: "4.4",
+          cardPhoto:
+            "https://img.cnt.traveloka.com/tvlk/apr-asset/dgXfoyh24ryQLRcGq00cIdKHRmotrWLNlvG-TxlcLxGkiDwaUSggleJNPRgIHCX6/hotel/asset/20036812-37095b8854308e137585dc22cbddf46d.jpeg?_src=imagekit&tr=dpr-2,c-at_max,h-360,q-80,w-640",
+          photos: [
+            "https://img.cnt.traveloka.com/tvlk/apr-asset/dgXfoyh24ryQLRcGq00cIdKHRmotrWLNlvG-TxlcLxGkiDwaUSggleJNPRgIHCX6/hotel/asset/20036812-28b494af0414cf8fb17f7b4ce3fa305c.jpeg?_src=imagekit&tr=dpr-2,c-at_max,h-360,q-80,w-640",
+            "https://img.cnt.traveloka.com/tvlk/apr-asset/dgXfoyh24ryQLRcGq00cIdKHRmotrWLNlvG-TxlcLxGkiDwaUSggleJNPRgIHCX6/hotel/asset/20036812-2697e07995574fe6a066c32cd87dbcc0.jpeg?_src=imagekit&tr=dpr-2,c-at_max,h-360,q-80,w-640",
+            "https://tse4.mm.bing.net/th/id/OIP.eeQOGuAFdz3GQZJ77GVy1wHaFj?r=0&pid=Api&h=220&P=0",
+            "https://img.cnt.traveloka.com/tvlk/apr-asset/dgXfoyh24ryQLRcGq00cIdKHRmotrWLNlvG-TxlcLxGkiDwaUSggleJNPRgIHCX6/hotel/asset/20036812-dcb0564915a07e83e4499709324051bc.jpeg?_src=imagekit&tr=dpr-2,c-at_max,h-360,q-40,w-640",
+          ],
+          description:
+            "hotel o festive inn medan,menampilkan beberapa untuk mnggambarkan beberapa foto agar anda dapat memilih tempat yang cocok dan nyaman untuk anda.",
+          facilities: ["Wi-Fi", "Parkir", "TV", "AC", "Kamar nyaman"],
+        },
+        {
+          id: 3,
+          name: "os residence",
+          location: "Medan, Sumatera Utara",
+          price: "Rp 100.000-an",
+          rating: "4.3",
+          cardPhoto:
+            "https://img.cnt.traveloka.com/tvlk/apr-asset/dgXfoyh24ryQLRcGq00cIdKHRmotrWLNlvG-TxlcLxGkiDwaUSggleJNPRgIHCX6/hotel/asset/20029593-150df91d60aca884108eb305084b95e6.jpeg?_src=imagekit&tr=dpr-2,c-at_max,h-360,q-80,w-640",
+          photos: [
+            "https://img.cnt.traveloka.com/tvlk/apr-asset/dgXfoyh24ryQLRcGq00cIdKHRmotrWLNlvG-TxlcLxGkiDwaUSggleJNPRgIHCX6/hotel/asset/20029593-bede43330a0ebe198bf5ddbfbd750416.jpeg?_src=imagekit&tr=dpr-2,c-at_max,h-360,q-80,w-640",
+            "https://img.cnt.traveloka.com/tvlk/apr-asset/dgXfoyh24ryQLRcGq00cIdKHRmotrWLNlvG-TxlcLxGkiDwaUSggleJNPRgIHCX6/hotel/asset/20029593-5ae3b058037af50b60aa13f1012b4a83.jpeg?_src=imagekit&tr=dpr-2,c-at_max,h-360,q-40,w-640",
+            "https://img.cnt.traveloka.com/tvlk/apr-asset/dgXfoyh24ryQLRcGq00cIdKHRmotrWLNlvG-TxlcLxGkiDwaUSggleJNPRgIHCX6/hotel/asset/20029593-f4ed2a2557fbcf01ee988fb39443ea42.jpeg?_src=imagekit&tr=dpr-2,c-at_max,h-360,q-40,w-640",
+            "https://img.cnt.traveloka.com/tvlk/apr-asset/dgXfoyh24ryQLRcGq00cIdKHRmotrWLNlvG-TxlcLxGkiDwaUSggleJNPRgIHCX6/hotel/asset/20029593-b89eb106b0cd298d60163fabde808d2c.jpeg?_src=imagekit&tr=dpr-2,c-at_max,h-360,q-40,w-640",
+          ],
+          description:
+            "os residence memberikan pelayanan dan tempat penginapan yang nyaman untuk tempat beristirahat dengan suasana yang tenang,nyaman dan harga bersahabat,pesan kamar anda sekarang dan nikmati pengalaman menginap sekarang!",
+          facilities: ["Wi-Fi", "Parkir", "TV", "AC", "Kamar mandi"],
+        },
+        {
+          id: 4,
+          name: "Hotel o sm raja GUESTHOUSE",
+          location: "Medan, Sumatera Utara",
+          price: "Rp 100.000-an",
+          rating: "4.5",
+          cardPhoto:
+            "https://cf.bstatic.com/xdata/images/hotel/max1024x768/753007326.jpg?k=2f2a7d81f2a1fb8912963dd4c29aa49a0856cd46d152e3cbd1d8380cdf5b8c92&o=",
+          photos: [
+            "https://images.oyoroomscdn.com/uploads/hotel_image/302703/medium/cyjjkxcxrpne.jpg",
+            "https://images.oyoroomscdn.com/uploads/hotel_image/302703/medium/jxnodengfcgo.jpg",
+            "https://images.oyoroomscdn.com/uploads/hotel_image/302703/medium/pnbwxbqtwnhn.jpg",
+            "https://images.oyoroomscdn.com/uploads/hotel_image/302703/medium/kqiixwwtinlp.jpg",
+          ],
+          description:
+            "jadikan setiap perjalanan lebih nyaman bersama Hotel o sm raja GUESTHOUSE.TEMPAT NYAMAN UNTUK SINGGAH PAS UNTUK BERISTIRAHAT.",
+          facilities: ["Wi-Fi", "Parkir", "TV", "AC", "Resepsionis"],
+        },
+      ];
+
+      const hotelGrid = document.getElementById("hotelGrid");
+      const homeView = document.getElementById("homeView");
+      const detailView = document.getElementById("detailView");
+
+      function renderHotels(list = hotels) {
+        hotelGrid.innerHTML = "";
+        if (!list.length) {
+          hotelGrid.innerHTML =
+            "<p>Tempat penginapan murah dan terjangkau.</p>";
+          return;
+        }
+        list.forEach((hotel) => {
+          const card = document.createElement("article");
+          card.className = "hotel-card";
+          card.innerHTML = `
+          <img src="${hotel.cardPhoto}" alt="Foto ${hotel.name}" loading="lazy">
+          <div class="card-body">
+            <h3>${hotel.name}</h3>
+            <div class="location">📍 ${hotel.location}</div>
+            <div class="amenities"><span>📶 Wi-Fi</span><span>🚗 Parkir</span><span>📺 TV</span><span>❄️ AC</span></div>
+            <div class="price">${hotel.price} <small>/ malam</small></div>
+            <button class="detail-btn" onclick="showDetail(${hotel.id})">Lihat Detail</button>
+          </div>`;
+          hotelGrid.appendChild(card);
+        });
+      }
+
+      function showDetail(id) {
+        const hotel = hotels.find((item) => item.id === id);
+        if (!hotel) return;
+        homeView.classList.add("hidden");
+        detailView.classList.add("active");
+        document.getElementById("detailName").textContent = hotel.name;
+        document.getElementById("detailLocation").textContent =
+          "📍 " + hotel.location;
+        document.getElementById("detailPrice").innerHTML =
+          `${hotel.price} <small>/ malam</small>`;
+        document.getElementById("detailRating").textContent = hotel.rating;
+        document.getElementById("detailDescription").textContent =
+          hotel.description;
+        document.getElementById("aboutText").textContent = hotel.description;
+        document.getElementById("detailFacilities").innerHTML = hotel.facilities
+          .map((f) => `<li>${f}</li>`)
+          .join("");
+
+        const safePhotos = hotel.photos;
+        const gallery = document.getElementById("gallery");
+        const thumbs = document.getElementById("thumbs");
+        gallery.innerHTML = `
+        <img class="main-photo" id="mainPhoto" src="${safePhotos[0]}" alt="Foto utama ${hotel.name}">
+        <img class="small-photo" src="${safePhotos[1] || safePhotos[0]}" alt="Foto kamar ${hotel.name}">
+        <img class="small-photo" src="${safePhotos[2] || safePhotos[0]}" alt="Foto fasilitas ${hotel.name}">`;
+        thumbs.innerHTML = safePhotos
+          .map(
+            (photo, index) =>
+              `<img src="${photo}" alt="Foto ${index + 1} ${hotel.name}" onclick="changeMainPhoto('${photo}')">`,
+          )
+          .join("");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        history.replaceState(null, "", "#hotel-" + id);
+      }
+
+      function changeMainPhoto(photo) {
+        document.getElementById("mainPhoto").src = photo;
+      }
+
+      function showHome() {
+        detailView.classList.remove("active");
+        homeView.classList.remove("hidden");
+        history.replaceState(null, "", window.location.pathname);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      function bookingHotel() {
+        alert("hubungi nomor 0812 6008 2080.");
+      }
+
+      document
+        .getElementById("searchForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+          const query = document
+            .getElementById("searchLocation")
+            .value.trim()
+            .toLowerCase();
+          const filtered = hotels.filter(
+            (hotel) =>
+              hotel.name.toLowerCase().includes(query) ||
+              hotel.location.toLowerCase().includes(query),
+          );
+          showHome();
+          renderHotels(filtered);
+          document
+            .getElementById("homeView")
+            .scrollIntoView({ behavior: "smooth" });
+        });
+
+      renderHotels();
+    </script>
+  </body>
+</html>
